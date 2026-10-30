@@ -52,3 +52,82 @@ def assess_visual_support(environment):
             environment.written_information_available
         ),
     }
+
+# Illustrative simulation assumptions, not validated clinical thresholds.
+MAX_BACKGROUND_NOISE_FOR_QUIET = 0.2
+MAX_DISTANCE_FOR_CLOSE_COMMUNICATION = 2.0
+
+
+def assess_communication_compatibility(
+    communication_profile,
+    environment,
+    channel="speech",
+    vocabulary=None,
+):
+    """Compare declared environmental preferences with observed conditions.
+
+    This function assesses environmental compatibility only.
+    It does not estimate comprehension or communication success.
+    """
+
+    communication_profile.validate(vocabulary)
+    environment.validate()
+
+    allowed_channels = {
+        "speech", "text", "sign", "visual", "other"
+    }
+
+    if channel not in allowed_channels:
+        raise ValueError(f"Invalid communication channel: {channel}")
+
+    preferences = communication_profile.environmental_preferences
+
+
+    results = {}
+
+    for preference in preferences:
+
+        if preference in {
+            "quiet_environment",
+            "reduced_background_noise",
+        }:
+            if channel != "speech":
+                status = "not_applicable"
+                observed_value = None
+                threshold = MAX_BACKGROUND_NOISE_FOR_QUIET
+            else:
+                observed_value = environment.background_noise
+                threshold = MAX_BACKGROUND_NOISE_FOR_QUIET
+
+                status = (
+                    "met"
+                    if observed_value <= threshold
+                    else "not_met"
+                )
+
+        elif preference == "close_speaker_distance":
+            observed_value = environment.distance_metres
+            threshold = MAX_DISTANCE_FOR_CLOSE_COMMUNICATION
+
+            status = (
+                "met"
+                if observed_value <= threshold
+                else "not_met"
+            )
+
+        else:
+            status = "not_assessed"
+            observed_value = None
+            threshold = None
+
+        results[preference] = {
+            "status": status,
+            "observed_value": observed_value,
+            "threshold": threshold,
+        }
+
+    return {
+        "environmental_preferences": results,
+        "visual_support": assess_visual_support(environment),
+        "comprehension": "not_assessed",
+    }

@@ -1,0 +1,35 @@
+# Python virtual environments
+.venv/
+.venv-linux/
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing and tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Generated databases
+outputs/*.db
+outputs/*.sqlite
+outputs/*.sqlite3
+
+# Generated temporary files
+*.tmp
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Backup and editor-generated files
+*.bak
+*.save

@@ -1,0 +1,370 @@
+# Australian Hearing Health Population Simulator
+## Communication Vocabulary
+
+**Vocabulary ID:** `AUS_HH_COMM_VOCAB`
+**Version:** 0.1.0
+**Status:** Draft for review
+**Language:** Australian English (`en-AU`)
+
+## Purpose
+
+A controlled, extensible vocabulary for representing communication modalities, preferences, signed languages, visual and written supports, environmental preferences, assistive technology, interaction strategies, accessibility accommodations, contexts, barriers and profile metadata in a synthetic population simulator.
+
+## Scope and limitations
+
+This is a project vocabulary for research modelling. It is not a clinical coding system, diagnostic taxonomy, validated psychometric instrument, prevalence dataset or substitute for consultation with Deaf, Deafblind and hard-of-hearing communities.
+
+The taxonomy is an initial synthesis informed by general communication-access guidance and hearing-health literature. Individual terms and definitions require source mapping and community review before the vocabulary is described as evidence-validated.
+
+## Design principles
+
+1. Keep preferences, capabilities, requirements, identity, environmental conditions, strategies, barriers and outcomes as distinct concepts.
+2. Do not infer communication preference, language proficiency, identity or comprehension from audiometric hearing category, age or device use.
+3. Treat an unrecorded preference as unknown or not assessed, not as absence of need.
+4. Allow multiple and context-dependent communication methods.
+5. Record the person's own stated preference wherever possible.
+6. Distinguish technology being owned, available, used, preferred, requested and beneficial.
+7. Do not treat sign languages as interchangeable or assume written English substitutes for a signed language.
+8. Record environmental conditions separately from an individual's profile.
+9. Record communication outcomes separately from environmental opportunity and preference alignment.
+10. Support changes over time and preserve the provenance of each observation.
+
+## Recording model
+
+Each profile or event record should use a structured record rather than a bare string wherever possible.
+
+| Field | Meaning |
+|---|---|
+| `term_id` | Stable machine-readable identifier |
+| `label` | Human-readable term |
+| `definition` | Operational definition |
+| `domain` | Vocabulary domain identifier |
+| `attribute_type` | Type of information represented |
+| `value` | Recorded value, separate from the term definition |
+| `status` | Whether the value is known, unknown, etc. |
+| `source` | Provenance of the information |
+| `context` | Optional context identifier |
+| `valid_from` | Optional date/time from which the record applies |
+| `valid_to` | Optional date/time until which the record applies |
+| `notes` | Optional qualification |
+
+### Status values
+
+| Value | Definition |
+|---|---|
+| `known` | The value has been established |
+| `unknown` | The value is not known |
+| `not_assessed` | The attribute has not been assessed or asked |
+| `not_applicable` | The attribute does not apply in this context |
+| `declined` | The person chose not to provide the information |
+
+### Source values
+
+| Value | Definition |
+|---|---|
+| `self_reported` | Reported by the person |
+| `observed` | Observed in a defined interaction; not necessarily a stable preference |
+| `assessed` | Recorded through a specified assessment; name the assessment and date |
+| `proxy_reported` | Reported by an authorised or agreed proxy; identify relationship and basis |
+| `scenario_assigned` | Assigned by an experimental scenario; not a claim about a real person |
+| `unknown` | Source not known |
+
+## Vocabulary domains and terms
+
+### Communication modalities
+
+**Domain ID:** `communication_modalities`
+**Attribute type:** `modality`
+
+Methods through which a person sends, receives or exchanges information.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `spoken_communication` | Spoken communication | Communication using spoken language. |
+| `speechreading` | Speechreading | Using visible speech movements and facial cues to support understanding. |
+| `auditory_listening` | Auditory listening | Receiving information primarily through auditory input. |
+| `written_communication` | Written communication | Exchanging information through written language. |
+| `text_messaging` | Text messaging | Exchanging short written messages through SMS or messaging applications. |
+| `visual_communication` | Visual communication | Using visual information to communicate or understand messages. |
+| `gesture_communication` | Gesture communication | Using conventional or non-conventional gestures. |
+| `facial_expression` | Facial expression | Using facial expressions as part of communication. |
+| `sign_language` | Sign language | Communicating through a natural or established signed language. |
+| `fingerspelling` | Fingerspelling | Representing words or names using manual alphabet forms. |
+| `tactile_communication` | Tactile communication | Receiving or exchanging information through touch. |
+| `multimodal_communication` | Multimodal communication | Combining two or more communication modalities. |
+
+### Spoken and auditory communication preferences
+
+**Domain ID:** `spoken_auditory_preferences`
+**Attribute type:** `preference`
+
+Preferences about how spoken communication is delivered. These are preferences, not evidence of ability.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `spoken_communication` | Spoken communication | Prefers spoken interaction in the relevant context. |
+| `face_to_face` | Face-to-face interaction | Prefers direct, in-person interaction. |
+| `one_to_one_conversation` | One-to-one conversation | Prefers individual conversation rather than group interaction. |
+| `small_group_conversation` | Small-group conversation | Prefers communication in a small group. |
+| `clear_speech` | Clear speech | Prefers clear, naturally articulated speech. |
+| `slower_speech` | Slower speech rate | Prefers a slower speaking rate. |
+| `normal_volume_speech` | Natural speaking volume | Prefers a natural speaking volume rather than shouting. |
+| `rephrasing` | Rephrasing | Prefers alternative wording when information is unclear. |
+| `repetition` | Repetition | Prefers missed information to be repeated. |
+| `short_sentences` | Short sentences | Prefers concise verbal statements. |
+| `topic_signposting` | Topic signposting | Prefers speakers to signal topic changes. |
+| `speaker_turn_taking` | Speaker turn-taking | Prefers one person to speak at a time. |
+| `advance_topic_information` | Advance topic information | Prefers to know the subject or agenda in advance. |
+
+### Signed languages and signed communication
+
+**Domain ID:** `signed_communication`
+**Attribute type:** `modality_or_preference`
+
+Specific signed languages and tactile/visual forms. Record the actual language and proficiency separately.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `auslan` | Auslan | Australian Sign Language. |
+| `signed_english` | Signed English | An English-based signed communication system; not interchangeable with Auslan. |
+| `international_sign` | International Sign | An international contact signing system used in some cross-language settings. |
+| `other_national_sign_language` | Other national sign language | A named sign language other than Auslan; record its name separately. |
+| `home_sign` | Home sign | Individually or family-developed signs used in a particular setting. |
+| `tactile_signing` | Tactile signing | Receiving signed communication through touch. |
+| `visual_frame_signing` | Visual frame signing | Adapting signing position and visual field to the recipient. |
+| `hand_over_hand` | Hand-under-hand or hand-over-hand communication | Tactile interaction involving guided or shared hand contact; specify the person's preferred approach. |
+| `tactile_fingerspelling` | Tactile fingerspelling | Receiving fingerspelled information through touch. |
+| `deaf_interpreter` | Deaf interpreter | A Deaf interpreter who may work alongside a hearing sign-language interpreter. |
+| `sign_language_interpreter` | Sign-language interpreter | A qualified interpreter between a signed language and another language. |
+
+### Visual communication supports
+
+**Domain ID:** `visual_supports`
+**Attribute type:** `environmental_support`
+
+Visual conditions and resources that may support communication. Availability does not establish comprehension.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `speaker_face_visible` | Speaker's face visible | The communication partner's face is visible. |
+| `mouth_visible` | Mouth visible | The speaker's mouth is unobstructed. |
+| `good_facial_lighting` | Adequate facial lighting | Lighting permits the face and relevant visual cues to be seen. |
+| `direct_visual_access` | Direct visual access | The person can see the communication partner or relevant visual information. |
+| `visual_context` | Visual context available | Relevant people, objects, locations or demonstrations are visible. |
+| `written_key_information` | Written key information | Important details are also supplied in writing. |
+| `visual_diagrams` | Visual diagrams | Diagrams or illustrations support the explanation. |
+| `pictorial_information` | Pictorial information | Pictures, symbols or visual sequences support information. |
+| `captioned_content` | Captioned content | Captions accompany recorded audiovisual content. |
+| `live_captioning` | Live captioning | Speech is captioned in real time. |
+| `visual_alerts` | Visual alerts | Important events or notifications are signalled visually. |
+| `visual_appointment_information` | Visual appointment information | Appointment details are displayed or supplied in an accessible written/visual format. |
+
+### Written communication and language preferences
+
+**Domain ID:** `written_language_preferences`
+**Attribute type:** `preference_or_access_support`
+
+Written-language preferences and formats. Language proficiency must be represented separately.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `plain_language` | Plain language | Prefers straightforward language and limited unnecessary jargon. |
+| `written_english` | Written English | Uses or prefers English for written communication; does not itself indicate proficiency. |
+| `preferred_written_language` | Preferred written language | The person's preferred language for written information; store the language value separately. |
+| `easy_read_information` | Easy-read information | Prefers information using simplified text and supportive images or layout. |
+| `large_print` | Large print | Prefers or requires larger text. |
+| `structured_written_information` | Structured written information | Prefers headings, lists and clearly organised written content. |
+| `visual_step_by_step_instructions` | Visual step-by-step instructions | Prefers sequential instructions supported by images or diagrams. |
+| `translated_information` | Translated information | Prefers or requires information translated into a specified language. |
+| `multilingual_communication` | Multilingual communication | Uses more than one language; record each language and proficiency separately. |
+| `spoken_language_interpreter` | Spoken-language interpreter | Requires or prefers interpreting between spoken languages in a specified context. |
+
+### Environmental communication preferences
+
+**Domain ID:** `environmental_preferences`
+**Attribute type:** `preference`
+
+Preferences about the physical and social environment. Actual environmental measurements belong to interaction records.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `quiet_environment` | Quiet environment | Prefers a low-noise communication setting. |
+| `reduced_background_noise` | Reduced background noise | Prefers competing noise to be reduced. |
+| `close_speaker_distance` | Close speaker distance | Prefers a comfortable, relatively close speaking distance. |
+| `good_room_acoustics` | Good room acoustics | Prefers spaces with suitable acoustic characteristics. |
+| `low_reverberation` | Low reverberation | Prefers environments with reduced reverberation. |
+| `good_room_lighting` | Good room lighting | Prefers adequate lighting for visual access. |
+| `face_to_face_seating` | Face-to-face seating | Prefers seating that supports visual access to communication partners. |
+| `small_group_setting` | Small-group setting | Prefers fewer participants in group communication. |
+| `reduced_visual_distractions` | Reduced visual distractions | Prefers fewer competing visual stimuli. |
+| `predictable_communication_environment` | Predictable communication environment | Prefers a familiar or predictable communication setting. |
+
+### Assistive listening and communication technology
+
+**Domain ID:** `assistive_technology`
+**Attribute type:** `technology_use_or_preference`
+
+Technologies used, available, requested or preferred. Distinguish ownership, access, use, benefit and preference.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `hearing_aid` | Hearing aid | Uses, has access to, or prefers hearing-aid technology; specify which status applies. |
+| `cochlear_implant` | Cochlear implant | Uses or has access to cochlear implant technology; do not infer performance. |
+| `bone_conduction_device` | Bone-conduction device | Uses or prefers a bone-conduction hearing device. |
+| `remote_microphone` | Remote microphone | Uses or prefers a remote microphone system. |
+| `hearing_loop` | Hearing loop | Uses or prefers an induction loop system. |
+| `fm_system` | FM system | Uses or prefers an FM assistive listening system. |
+| `infrared_listening_system` | Infrared listening system | Uses or prefers an infrared listening system. |
+| `bluetooth_audio` | Bluetooth audio | Uses or prefers Bluetooth-connected audio. |
+| `real_time_transcription` | Real-time transcription | Uses real-time conversion of speech to text. |
+| `speech_to_text_application` | Speech-to-text application | Uses an application to convert speech into text. |
+| `video_relay_service` | Video relay service | Uses video-based relay communication. |
+| `national_relay_service` | National Relay Service | Uses Australia's National Relay Service; record the relevant service mode separately. |
+| `captioned_telephone` | Captioned telephone | Uses telephone services with captions. |
+| `assistive_alerting_device` | Assistive alerting device | Uses visual, vibrating or other alerting technology. |
+| `communication_board` | Communication board | Uses a board or display containing words, symbols or pictures. |
+| `augmentative_alternative_communication` | Augmentative and alternative communication | Uses AAC methods or devices to supplement or replace speech. |
+
+### Communication interaction strategies
+
+**Domain ID:** `interaction_strategies`
+**Attribute type:** `strategy`
+
+Actions that a person, communication partner or service provider may use. Record who initiated the strategy.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `attention_before_speaking` | Gain attention before speaking | Establish the person's attention before beginning. |
+| `face_listener_when_speaking` | Face the listener | Face the person while speaking where appropriate. |
+| `avoid_covering_mouth` | Keep mouth unobstructed | Avoid covering the mouth where visual speech cues are relevant. |
+| `one_speaker_at_a_time` | One speaker at a time | Reduce overlapping speech. |
+| `rephrase_unclear_information` | Rephrase unclear information | Use different wording to clarify a message. |
+| `repeat_missed_information` | Repeat missed information | Repeat information that was not received. |
+| `confirm_understanding` | Check understanding | Check whether the intended information was understood. |
+| `teach_back` | Teach-back | Invite the person to explain key information in their own words. |
+| `written_follow_up` | Provide written follow-up | Provide important information in writing after the interaction. |
+| `communication_repair` | Communication repair | Use a strategy to resolve a communication breakdown. |
+| `clarification_request` | Request clarification | The listener asks for additional or clearer information. |
+| `conversation_breaks` | Conversation breaks | Allow breaks during demanding or lengthy communication. |
+| `communication_partner_support` | Communication partner support | Involve a support person when requested or agreed. |
+
+### Accessibility and individual support requirements
+
+**Domain ID:** `accessibility_accommodations`
+**Attribute type:** `requirement_or_accommodation`
+
+Supports requested, required or agreed for a particular person and context. Do not infer them from age or hearing category.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `professional_interpreter_required` | Professional interpreter | Professional interpreting support is requested or required. |
+| `deaf_interpreter_required` | Deaf interpreter | A Deaf interpreter is requested or required. |
+| `communication_support_person` | Communication support person | A nominated support person assists communication, with the person's agreement. |
+| `additional_processing_time` | Additional processing time | Allow additional time to receive, process or respond to information. |
+| `reduced_information_load` | Reduced information load | Present information in manageable amounts. |
+| `communication_fatigue_support` | Communication fatigue support | Provide strategies or adjustments to manage communication-related fatigue. |
+| `cognitive_accessibility_support` | Cognitive accessibility support | Adapt communication for identified cognitive accessibility needs. |
+| `visual_accessibility_support` | Visual accessibility support | Adapt communication to address visual access needs. |
+| `deafblind_communication_support` | Deafblind communication support | Provide an agreed Deafblind-specific communication method or support. |
+| `accessible_digital_content` | Accessible digital content | Provide digital information in an accessible format. |
+
+### Communication contexts
+
+**Domain ID:** `communication_contexts`
+**Attribute type:** `context`
+
+Contexts in which preferences, capabilities, supports and barriers may differ.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `family_communication` | Family communication | Communication with family members. |
+| `social_communication` | Social communication | Communication with friends and social networks. |
+| `workplace_communication` | Workplace communication | Communication at work or in employment-related settings. |
+| `education_communication` | Education communication | Communication in school, training or tertiary education. |
+| `healthcare_communication` | Healthcare communication | Communication during healthcare encounters. |
+| `telephone_communication` | Telephone communication | Communication by telephone. |
+| `video_conference_communication` | Video conference communication | Communication through video calls or meetings. |
+| `group_communication` | Group communication | Communication involving multiple participants. |
+| `public_service_communication` | Public service communication | Communication with government or public services. |
+| `emergency_communication` | Emergency communication | Communication in urgent or emergency situations. |
+| `community_communication` | Community communication | Communication in community settings and activities. |
+| `digital_communication` | Digital communication | Communication through digital platforms. |
+
+### Communication barriers and difficulties
+
+**Domain ID:** `communication_barriers`
+**Attribute type:** `barrier`
+
+Barriers observed, reported or experienced in an interaction. A barrier is not a personal deficit.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `background_noise_barrier` | Background noise | Competing environmental noise interferes with communication. |
+| `multiple_speakers_barrier` | Multiple simultaneous speakers | Overlapping speech makes communication more difficult. |
+| `poor_lighting_barrier` | Poor lighting | Insufficient lighting limits visual access. |
+| `speaker_face_obstructed` | Speaker's face obstructed | The speaker's face or mouth cannot be seen. |
+| `distance_barrier` | Excessive distance | The communication partner is too far away for the chosen method. |
+| `poor_acoustic_environment` | Poor acoustic environment | Room acoustics impede communication. |
+| `unfamiliar_accent_difficulty` | Unfamiliar accent | The listener reports difficulty understanding an accent. |
+| `rapid_speech_difficulty` | Rapid speech | The speaking rate is difficult to follow. |
+| `complex_language_barrier` | Complex language | Jargon or complex language impedes understanding. |
+| `interpreter_unavailable` | Interpreter unavailable | A requested or required interpreter is unavailable. |
+| `captioning_unavailable` | Captioning unavailable | Required captions are unavailable. |
+| `technology_unavailable` | Technology unavailable | Required assistive technology is unavailable. |
+| `digital_access_barrier` | Digital access barrier | Device, connectivity, platform or digital-literacy issues impede access. |
+| `language_mismatch` | Language mismatch | The languages used do not adequately match the person's language needs. |
+| `communication_partner_unaware` | Communication partner unaware | A partner is unaware of or does not respond to stated communication needs. |
+| `communication_fatigue` | Communication fatigue | The person reports fatigue associated with communication effort. |
+| `time_pressure` | Time pressure | Insufficient time is available for accessible communication. |
+| `privacy_barrier` | Privacy barrier | The setting does not permit the person's preferred communication method or disclosure. |
+
+### Preference and profile metadata
+
+**Domain ID:** `preference_metadata`
+**Attribute type:** `metadata`
+
+Metadata used to record the source, certainty, context and temporal validity of profile information. These are schema fields rather than personal preference terms.
+
+| Identifier | Term | Definition |
+|---|---|---|
+| `preferred_communication_method` | Preferred communication method | The person's stated preferred method for a defined context. |
+| `secondary_communication_method` | Secondary communication method | Another method the person is willing or able to use. |
+| `context_specific_preference` | Context-specific preference | A preference that applies only in a defined context. |
+| `preferred_interaction_group_size` | Preferred interaction group size | Preferred number or size of communication participants. |
+| `preferred_information_format` | Preferred information format | Preferred format for receiving information. |
+| `preferred_interpreter_type` | Preferred interpreter type | The person's stated interpreter preference. |
+| `preferred_language` | Preferred language | Language preferred for a specified communication task. |
+| `preferred_communication_partner` | Preferred communication partner | A person the individual prefers to communicate with or have present. |
+| `preference_confidence` | Preference confidence | Confidence or certainty associated with the recorded preference; define scale separately. |
+| `preference_source` | Preference source | Whether the information was self-reported, observed, assessed or supplied by an authorised proxy. |
+| `preference_review_date` | Preference review date | Date the preference was last reviewed. |
+| `preference_change` | Preference change | A recorded change in preference over time. |
+
+## Implementation guidance
+
+- The current `AgentProfile.communication_preferences` list should not be expanded to hold all vocabulary domains. It should eventually be replaced or supplemented by structured profile records.
+- A separate language profile should record language name, modality, proficiency, literacy where relevant, and evidence/source. Do not infer proficiency from preference.
+- A separate technology record should distinguish ownership, access, use frequency, preference, requested use and reported benefit.
+- Interaction-level environment fields such as noise, distance, face visibility and written information availability belong to `CommunicationEvent` or its environment object.
+- Communication barriers should be recorded as event observations or person-reported experiences, not permanent attributes by default.
+- The current acoustic indicator is illustrative and must not be interpreted as speech intelligibility or comprehension.
+- Preference compatibility should return `supported`, `not_supported` or `unknown`, and should not determine comprehension.
+- For real-world research, review the vocabulary with Deaf, Deafblind, Auslan-using, hard-of-hearing and other relevant community representatives before use.
+
+## Evidence and governance
+
+The initial taxonomy is informed by broad communication-access guidance and hearing-health literature, including:
+
+- World Health Organization guidance on communication with people who are deaf or hard of hearing.
+- NSW Health guidance on engaging Deaf consumers, Auslan and Deafblind communication access.
+- American Speech-Language-Hearing Association guidance on aural rehabilitation and communication access.
+- Australian Government guidance for accessible primary care and interpreter use.
+- Peer-reviewed research on communication barriers, listening effort, healthcare access and Deaf community experiences.
+
+**Citation requirement for publication:** attach an exact source citation to each term or group of terms. Do not claim that the whole vocabulary is validated merely because its domains are informed by published guidance.
+
+## Version history
+
+| Version | Status | Description |
+|---|---|---|
+| 0.1.0 | Draft | Initial 12-domain controlled vocabulary for project review |

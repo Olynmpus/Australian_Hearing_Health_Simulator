@@ -1,0 +1,49 @@
+{
+    "experiment_id": "HH-EXP-001",
+    "experiment_name": "Baseline Australian Hearing Health and Help-Seeking Scenario",
+    "population": {
+        "size": 1000,
+        "age_groups": [
+            "infant",
+            "preschool",
+            "school_age",
+            "adolescent",
+            "working_age_adult",
+            "older_adult"
+        ],
+        "geography": {
+            "metropolitan": 55,
+            "regional": 35,
+            "remote_very_remote": 10
+        }
+    },
+    "hearing_profiles": {
+        "categories": [
+            "normal",
+            "mild",
+            "moderate",
+            "severe",
+            "profound"
+        ],
+        "onset_types": ["congenital", "acquired"],
+        "progression_types": ["stable", "progressive", "fluctuating"]
+    },
+    "awareness": {
+        "initial_awareness_rate": 0.40
+    },
+    "access": {
+        "assessment_cost_aud": 100,
+        "average_travel_distance_km": 150,
+        "assessment_subsidy_rate": 0.0,
+        "mobile_outreach_enabled": false,
+        "teleaudiology_enabled": false,
+        "family_encouragement_enabled": false
+    },
+    "simulation": {
+        "duration_months": 12,
+        "time_step": "monthly",
+        "number_of_repetitions": 100,
+        "random_seed": 42
+    },
+    "evidence_status": "illustrative_assumptions_pending_calibration"
+}

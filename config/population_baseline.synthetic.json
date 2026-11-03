@@ -1,0 +1,45 @@
+{
+    "profile_id": "HH-POP-SYN-001",
+    "description": "Synthetic population profile for software development and testing only.",
+    "evidence_status": "simulation_assumption",
+    "independence_assumption": true,
+    "notes": [
+        "These weights are not Australian population estimates.",
+        "Equal relative weights are used to exercise the generator.",
+        "Geographical weights are read from the experiment configuration.",
+        "Population characteristics are sampled independently.",
+        "Auditory functional status is sampled independently of audiometric profile."
+    ],
+    "weights": {
+        "age_groups": {
+            "infant": 1,
+            "preschool": 1,
+            "school_age": 1,
+            "adolescent": 1,
+            "working_age_adult": 1,
+            "older_adult": 1
+        },
+        "hearing_profiles": {
+            "normal": 1,
+            "mild": 1,
+            "moderate": 1,
+            "severe": 1,
+            "profound": 1
+        },
+        "onset_types": {
+            "congenital": 1,
+            "acquired": 1
+        },
+        "progression_types": {
+            "stable": 1,
+            "progressive": 1,
+            "fluctuating": 1
+        },
+        "auditory_functional_status": {
+            "no_identified_difficulty": 1,
+            "difficulty_reported": 1,
+            "functional_difficulty_confirmed": 1,
+            "unknown": 1
+        }
+    }
+}

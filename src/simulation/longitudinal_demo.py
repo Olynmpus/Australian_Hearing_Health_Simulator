@@ -5,7 +5,10 @@ from src.agents.memory_store import MemoryStore
 from src.agents.relationships import SocialRelationship
 from src.behaviour.experience_model import apply_experience
 from src.behaviour.relationship_model import apply_relationship_experience
-
+from src.behaviour.communication_model import (
+    CommunicationEvent,
+    CommunicationEnvironment,
+)
 
 def run_experiment(database_path):
     """Run a four-month illustrative longitudinal experiment."""
@@ -18,121 +21,289 @@ def run_experiment(database_path):
             "Choose another path to avoid overwriting it."
         )
 
-    person = Agent(
-        agent_id="PERSON-001",
-        profile=AgentProfile(
-            age_group="working_age_adult",
-            hearing_profile="moderate_hearing_difficulty",
-            geography="regional",
-            role="community_member",
-            onset_type="acquired",
-            progression_type="stable",
-            communication_profile=AgentCommunicationProfile(modalities=["spoken_communication"]),
+    agents = {
+        "PERSON-001": Agent(
+            agent_id="PERSON-001",
+            profile=AgentProfile(
+                age_group="working_age_adult",
+                hearing_profile="moderate_hearing_difficulty",
+                geography="regional",
+                role="community_member",
+                onset_type="acquired",
+                progression_type="stable",
+                communication_profile=AgentCommunicationProfile(
+                    modalities=["spoken_communication"]
+                ),
+            ),
+            state=AgentState(),
+            history_id="PERSON-001",
         ),
-        state=AgentState(),
-        current_month=0,
-        history_id="PERSON-001",
-    )
 
-    relationships = {
-        "FAMILY-001": SocialRelationship(
-            agent_id="PERSON-001",
-            contact_id="FAMILY-001",
-            relationship_type="family",
+        "FAMILY-001": Agent(
+            agent_id="FAMILY-001",
+            profile=AgentProfile(
+                age_group="working_age_adult",
+                hearing_profile="unknown",
+                geography="regional",
+                role="family_member",
+            ),
+            state=AgentState(),
+            history_id="FAMILY-001",
         ),
-        "SERVICE-001": SocialRelationship(
-            agent_id="PERSON-001",
-            contact_id="SERVICE-001",
-            relationship_type="health_service",
+
+        "FRIEND-001": Agent(
+            agent_id="FRIEND-001",
+            profile=AgentProfile(
+                age_group="working_age_adult",
+                hearing_profile="unknown",
+                geography="regional",
+                role="friend",
+            ),
+            state=AgentState(),
+            history_id="FRIEND-001",
         ),
-        "FRIEND-001": SocialRelationship(
-            agent_id="PERSON-001",
-            contact_id="FRIEND-001",
-            relationship_type="friend",
+
+        "SERVICE-001": Agent(
+            agent_id="SERVICE-001",
+            profile=AgentProfile(
+                age_group="working_age_adult",
+                hearing_profile="unknown",
+                geography="regional",
+                role="service_representative",
+            ),
+            state=AgentState(),
+            history_id="SERVICE-001",
         ),
     }
+
+    person = agents["PERSON-001"]
+
+    for agent in agents.values():
+        agent.validate()
+
+    relationships = {
+        "PERSON-001": {
+            "FAMILY-001": SocialRelationship(
+                agent_id="PERSON-001",
+                contact_id="FAMILY-001",
+                relationship_type="family",
+            ),
+            "SERVICE-001": SocialRelationship(
+                agent_id="PERSON-001",
+                contact_id="SERVICE-001",
+                relationship_type="health_service",
+            ),
+            "FRIEND-001": SocialRelationship(
+                agent_id="PERSON-001",
+                contact_id="FRIEND-001",
+                relationship_type="friend",
+            ),
+        },
+        "FAMILY-001": {
+            "PERSON-001": SocialRelationship(
+                agent_id="FAMILY-001",
+                contact_id="PERSON-001",
+                relationship_type="family",
+            ),
+        },
+        "SERVICE-001": {
+            "PERSON-001": SocialRelationship(
+                agent_id="SERVICE-001",
+                contact_id="PERSON-001",
+                relationship_type="client",
+            ),
+        },
+        "FRIEND-001": {
+            "PERSON-001": SocialRelationship(
+                agent_id="FRIEND-001",
+                contact_id="PERSON-001",
+                relationship_type="friend",
+            ),
+        },
+    }
+
+    for agent_id, agent_relationships in relationships.items():
+        if agent_id not in agents:
+            raise ValueError("Relationship owner does not exist.")
+
+        for relationship in agent_relationships.values():
+            relationship.validate()
+
+            if relationship.agent_id != agent_id:
+                raise ValueError("Relationship owner does not match its key.")
+
+            if relationship.contact_id not in agents:
+                raise ValueError("Relationship contact does not exist.")
 
     monthly_events = [
         {
             "month": 1,
-            "contact": "FAMILY-001",
+            "interaction_id": "INTERACTION-001",
             "event_type": "family_interaction",
-            "outcome": "negative_communication",
+            "participants": ["PERSON-001", "FAMILY-001"],
             "message": "A family conversation was difficult to follow.",
-            "interpretation": "The person felt excluded from the conversation.",
+            "perspectives": {
+                "PERSON-001": {
+                    "interpretation": "The person felt excluded from the conversation.",
+                    "outcome": "negative_communication",
+                    "perspective_type": "recipient",
+                },
+                "FAMILY-001": {
+                    "interpretation": "The family member noticed communication difficulties during the conversation.",
+                    "outcome": None,
+                    "perspective_type": "other_participant",
+                },
+            },
         },
         {
-            "month": 2,
-            "contact": "SERVICE-001",
+             "month": 2,
+            "interaction_id": "INTERACTION-002",
             "event_type": "service_interaction",
-            "outcome": "misdirected_information",
+            "participants": ["PERSON-001", "SERVICE-001"],
             "message": "The person received information that did not address their needs.",
-            "interpretation": "The person felt uncertain about where to seek help.",
+            "perspectives": {
+                "PERSON-001": {
+                    "interpretation": "The person felt uncertain about where to seek help.",
+                    "outcome": "misdirected_information",
+                    "perspective_type": "recipient",
+                },
+                "SERVICE-001": {
+                    "interpretation": "The service representative's understanding of the interaction has not yet been established.",
+                    "outcome": None,
+                    "perspective_type": "other_participant",
+                },
+            },
         },
         {
             "month": 3,
-            "contact": "FRIEND-001",
+            "interaction_id": "INTERACTION-003",
             "event_type": "social_interaction",
-            "outcome": "supportive_communication",
+            "participants": ["PERSON-001", "FRIEND-001"],
             "message": "A friend made an effort to communicate clearly.",
-            "interpretation": "The person felt included and supported.",
+            "perspectives": {
+                "PERSON-001": {
+                    "interpretation": "The person felt included and supported.",
+                    "outcome": "supportive_communication",
+                    "perspective_type": "recipient",
+                },
+                "FRIEND-001": {
+                    "interpretation": "The friend attempted to make communication easier.",
+                    "outcome": None,
+                    "perspective_type": "other_participant",
+                },
+            },
         },
         {
             "month": 4,
-            "contact": "SERVICE-001",
+            "interaction_id": "INTERACTION-004",
             "event_type": "service_interaction",
-            "outcome": "blocked_service_access",
+            "participants": ["PERSON-001", "SERVICE-001"],
             "message": "The person encountered a barrier when trying to access a service.",
-            "interpretation": "The person felt discouraged about accessing support.",
+            "perspectives": {
+                "PERSON-001": {
+                    "interpretation": "The person felt discouraged about accessing support.",
+                    "outcome": "blocked_service_access",
+                    "perspective_type": "recipient",
+                },
+                "SERVICE-001": {
+                    "interpretation": "The service representative's understanding of the access barrier has not yet been established.",
+                    "outcome": None,
+                    "perspective_type": "other_participant",
+                },
+            },
         },
     ]
 
     snapshots = []
 
     memory = MemoryStore(database_path)
+
     for event in monthly_events:
-        person.current_month = event["month"]
-
-        state_changes = apply_experience(
-            person.state,
-            event["outcome"],
+        month = event["month"]
+        participants = event["participants"]
+        communication_event = CommunicationEvent(
+            speaker_id=participants[1],
+            listener_id=participants[0],
+            intended_message=event["message"],
+            perceived_message=event["message"],
+            listener_interpretation=event["perspectives"][participants[0]]["interpretation"],
+            channel="speech",
+            environment=CommunicationEnvironment(),
         )
 
-        relationship = relationships[event["contact"]]
+        communication_event.validate()
 
-        relationship_changes = apply_relationship_experience(
-            relationship,
-            event["outcome"],
-        )
+        for agent_id in participants:
+            agent = agents[agent_id]
+            other_participant = next(
+                participant
+                for participant in participants
+                if participant != agent_id
+            )
 
-        memory.record_event(
-            agent_id=person.agent_id,
-            month=event["month"],
-            event_type=event["event_type"],
-            sender_id=event["contact"],
-            recipient_id=person.agent_id,
-            actual_message=event["message"],
-            agent_interpretation=event["interpretation"],
-            outcome=event["outcome"],
-            source_accuracy=None,
-            emotional_appraisal=None,
-            additional_details={
-                "state_changes": state_changes,
-                "relationship_changes": relationship_changes,
-            },
-         )
+            agent.current_month = month
+
+            perspective = event["perspectives"][agent_id]
+            outcome = perspective["outcome"]
+
+            state_changes = {}
+            relationship_changes = {}
+
+            if outcome is not None:
+                state_changes = apply_experience(
+                    agent.state,
+                    outcome,
+                )
+
+                relationship = relationships[agent_id][other_participant]
+
+                relationship_changes = apply_relationship_experience(
+                    relationship,
+                    outcome,
+                )
+
+            memory.record_event(
+                agent_id=agent_id,
+                month=month,
+                event_type=event["event_type"],
+                actual_message=event["message"],
+                agent_interpretation=perspective["interpretation"],
+                outcome=outcome or "not_assigned",
+                additional_details={
+                    "interaction_id": event["interaction_id"],
+                    "participants": participants,
+                    "communication_event": {
+                        "speaker_id": communication_event.speaker_id,
+                        "listener_id": communication_event.listener_id,
+                        "intended_message": communication_event.intended_message,
+                        "perceived_message": communication_event.perceived_message,
+                        "listener_interpretation": (
+                            communication_event.listener_interpretation
+                        ),
+                        "channel": communication_event.channel,
+                        "initial_outcome": communication_event.initial_outcome,
+                        "final_outcome": communication_event.final_outcome,
+                    },
+                    "perspective_type": perspective["perspective_type"],
+                    "state_changes": state_changes,
+                    "relationship_changes": relationship_changes,
+                },
+            )
 
         snapshots.append(
             {
-                "month": event["month"],
-                "outcome": event["outcome"],
+                "month": month,
+                "outcome": event["perspectives"][person.agent_id]["outcome"],
                 "state": person.summary(),
             }
         )
 
-    history = memory.get_history(person.agent_id)
+    agent_histories = {
+        agent_id: memory.get_history(agent_id)
+        for agent_id in agents
+    }
 
-    return person, relationships, history, snapshots
+    return person, relationships, agent_histories, snapshots
 
 
 if __name__ == "__main__":
@@ -156,12 +327,22 @@ if __name__ == "__main__":
     print("\nFINAL RELATIONSHIPS")
     print("==================")
 
-    for contact_id, relationship in relationships.items():
-        print(
-            f"{contact_id}: "
-            f"trust={relationship.trust:.2f}, "
-            f"support={relationship.perceived_support:.2f}"
-        )
+    for agent_id, agent_relationships in relationships.items():
+        print(f"\n{agent_id}")
 
-    print(f"\nRetrieved history events: {len(history)}")
+        for contact_id, relationship in agent_relationships.items():
+            print(
+                f"  {contact_id}: "
+                f"trust={relationship.trust:.2f}, "
+                f"support={relationship.perceived_support:.2f}"
+            )
+
+    print("\nAGENT MEMORY HISTORIES")
+    print("======================")
+
+    for agent_id, events in history.items():
+        print(f"{agent_id}: {len(events)} events")
+
+    total_events = sum(len(events) for events in history.values())
+    print(f"\nTotal memory events: {total_events}")
     print(f"Database saved at: {output_path}")

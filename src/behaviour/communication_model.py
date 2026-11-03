@@ -56,8 +56,8 @@ class CommunicationEvent:
 
     clarification_requested: bool = False
 
-    initial_outcome: str = "understood"
-    final_outcome: str = "understood"
+    initial_outcome: str = "not_assessed"
+    final_outcome: str = "not_assessed"
 
     def validate(self):
         """Validate the communication event."""
@@ -99,6 +99,7 @@ class CommunicationEvent:
             "understood",
             "partially_understood",
             "misunderstood",
+            "not_assessed",
         }
 
         if self.initial_outcome not in allowed_outcomes:

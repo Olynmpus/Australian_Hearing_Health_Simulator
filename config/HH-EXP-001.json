@@ -25,11 +25,18 @@
             "severe",
             "profound"
         ],
-        "onset_types": ["congenital", "acquired"],
-        "progression_types": ["stable", "progressive", "fluctuating"]
+        "onset_types": [
+            "congenital",
+            "acquired"
+        ],
+        "progression_types": [
+            "stable",
+            "progressive",
+            "fluctuating"
+        ]
     },
     "awareness": {
-        "initial_awareness_rate": 0.40
+        "initial_awareness_rate": 0.4
     },
     "access": {
         "assessment_cost_aud": 100,
@@ -45,5 +52,13 @@
         "number_of_repetitions": 100,
         "random_seed": 42
     },
-    "evidence_status": "illustrative_assumptions_pending_calibration"
+    "evidence_status": "illustrative_assumptions_pending_calibration",
+    "auditory_function": {
+        "functional_statuses": [
+            "no_identified_difficulty",
+            "difficulty_reported",
+            "functional_difficulty_confirmed",
+            "unknown"
+        ]
+    }
 }

@@ -2,6 +2,14 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 
+AUDITORY_FUNCTIONAL_STATUSES = {
+    "no_identified_difficulty",
+    "difficulty_reported",
+    "functional_difficulty_confirmed",
+    "unknown",
+}
+
+
 COMMUNICATION_DOMAIN_FIELDS = {
     "modalities": "communication_modalities",
     "spoken_preferences": "spoken_auditory_preferences",
@@ -86,6 +94,7 @@ class AgentProfile:
     age_group: str
     hearing_profile: str
     geography: str
+    auditory_functional_status: str = "unknown"
     role: str = "community_member"
 
     onset_type: str = "unknown"
@@ -105,6 +114,12 @@ class AgentProfile:
             raise ValueError(
                 "communication_profile must be an "
                 "AgentCommunicationProfile object."
+            )
+
+        if self.auditory_functional_status not in AUDITORY_FUNCTIONAL_STATUSES:
+            raise ValueError(
+                "Invalid auditory_functional_status: "
+                f"{self.auditory_functional_status}"
             )
 
         self.communication_profile.validate(vocabulary)
@@ -153,6 +168,9 @@ class Agent:
         self.profile.validate(vocabulary)
         self.state.validate()
 
+        return True
+
+
     def summary(self):
         """Return a complete, readable summary of the agent."""
 
@@ -163,6 +181,7 @@ class Agent:
 
             "age_group": self.profile.age_group,
             "hearing_profile": self.profile.hearing_profile,
+            "auditory_functional_status": self.profile.auditory_functional_status,
             "geography": self.profile.geography,
             "role": self.profile.role,
             "onset_type": self.profile.onset_type,

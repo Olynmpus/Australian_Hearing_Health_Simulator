@@ -1,0 +1,17 @@
+{
+    "intervention_id": "HH-INT-001",
+    "name": "Mobile Hearing Assessment Outreach",
+    "description": "An additional mobile hearing assessment service pathway targeting regional and remote or very remote communities.",
+    "intervention_type": "service",
+    "target_geographies": [
+        "regional",
+        "remote_very_remote"
+    ],
+    "intended_service_change": "Provide an additional pathway for accessing hearing assessment services.",
+    "evidence_status": "simulation_assumption",
+    "assumptions": [
+        "The intervention is a proposed scenario, not an established Australian service.",
+        "The intervention does not guarantee service availability or individual attendance.",
+        "Its effect on access, waiting times and outcomes has not yet been established."
+    ]
+}

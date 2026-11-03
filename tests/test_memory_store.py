@@ -79,6 +79,59 @@ class TestMemoryStore(unittest.TestCase):
                     source_accuracy=1.5
                 )
 
+    def test_same_interaction_can_have_individual_perspectives(self):
 
+        with tempfile.TemporaryDirectory() as temporary_folder:
+
+            database = Path(temporary_folder) / "test_memory.db"
+            memory = MemoryStore(database)
+
+            interaction_id = "INTERACTION-001"
+
+            memory.record_event(
+                agent_id="PERSON-001",
+                month=1,
+                event_type="family_conversation",
+                sender_id="FAMILY-001",
+                recipient_id="PERSON-001",
+                actual_message="A difficult family conversation.",
+                agent_interpretation="I felt excluded.",
+                outcome="negative_communication",
+                additional_details={
+                    "interaction_id": interaction_id,
+                    "perspective": "recipient",
+                },
+            )
+
+            memory.record_event(
+                agent_id="FAMILY-001",
+                month=1,
+                event_type="family_conversation",
+                sender_id="PERSON-001",
+                recipient_id="FAMILY-001",
+                actual_message="A difficult family conversation.",
+                agent_interpretation="I thought the conversation was becoming frustrating.",
+                outcome="negative_communication",
+                additional_details={
+                    "interaction_id": interaction_id,
+                    "perspective": "recipient",
+                },
+            )
+
+            person_history = memory.get_history("PERSON-001")
+            family_history = memory.get_history("FAMILY-001")
+
+            self.assertEqual(len(person_history), 1)
+            self.assertEqual(len(family_history), 1)
+
+            self.assertEqual(
+                person_history[0]["additional_details"]["interaction_id"],
+                family_history[0]["additional_details"]["interaction_id"],
+            )
+
+            self.assertNotEqual(
+                person_history[0]["agent_interpretation"],
+                family_history[0]["agent_interpretation"],
+            )
 if __name__ == "__main__":
     unittest.main()

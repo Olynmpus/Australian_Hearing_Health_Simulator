@@ -132,6 +132,7 @@ def run_population_experiment(
     agents = generate_population(
         experiment_config,
         distribution_config,
+        country_profile=country_profile,
     )
 
     support_records = create_hearing_support_records(agents)

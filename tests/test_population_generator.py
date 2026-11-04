@@ -201,6 +201,49 @@ class TestPopulationGenerator(unittest.TestCase):
                 agent.summary(),
             )
 
+    def test_generates_population_for_different_country_geographies(self):
+        country_profile = {
+            "service_context": {
+                "geographies": ["urban", "rural"],
+            }
+        }
 
+        experiment = self.experiment.copy()
+        experiment["population"] = self.experiment["population"].copy()
+        experiment["population"]["geography"] = {
+            "urban": 70,
+            "rural": 30,
+        }
+
+        agents = generate_population(
+            experiment,
+            self.distribution,
+            country_profile=country_profile,
+        )
+
+        self.assertEqual(len(agents), 1000)
+        self.assertTrue(
+            all(
+                agent.profile.geography in ["urban", "rural"]
+                for agent in agents
+            )
+        )
+
+    def test_rejects_geographies_not_matching_country_profile(self):
+        country_profile = {
+            "service_context": {
+                "geographies": ["urban", "rural"],
+            }
+        }
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "must match the country profile geographies",
+        ):
+            generate_population(
+                self.experiment,
+                self.distribution,
+                country_profile=country_profile,
+            )
 if __name__ == "__main__":
     unittest.main()

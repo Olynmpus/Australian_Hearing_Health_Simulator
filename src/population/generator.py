@@ -62,6 +62,7 @@ def generate_population(
     experiment_config,
     distribution_config,
     vocabulary=None,
+    country_profile=None,
 ):
     """Generate agents from experiment and synthetic distribution settings.
 
@@ -104,10 +105,39 @@ def generate_population(
     ):
         raise ValueError("random_seed must be an integer or None.")
 
+    geography_weights = population_config.get("geography", {})
+
+    if not isinstance(geography_weights, dict):
+        raise ValueError("Population geography must be a dictionary.")
+
+    if country_profile is not None:
+        if not isinstance(country_profile, dict):
+            raise ValueError("country_profile must be a dictionary.")
+
+        service_context = country_profile.get("service_context")
+
+        if not isinstance(service_context, dict):
+            raise ValueError(
+                "Country profile must contain a service_context object."
+            )
+
+        country_geographies = service_context.get("geographies")
+
+        _validate_categories(
+            "country geographies",
+            country_geographies,
+        )
+
+        if set(geography_weights) != set(country_geographies):
+            raise ValueError(
+                "Experiment geography categories must match "
+                "the country profile geographies."
+            )
+
     categories = {
         "age_groups": population_config.get("age_groups"),
         "hearing_profiles": hearing_config.get("categories"),
-        "geography": list(population_config.get("geography", {}).keys()),
+        "geography": list(geography_weights.keys()),
         "onset_types": hearing_config.get("onset_types"),
         "progression_types": hearing_config.get("progression_types"),
         "auditory_functional_status": (auditory_function_config.get("functional_statuses")),
@@ -121,7 +151,7 @@ def generate_population(
 
         if name == "geography":
             # Geography weights are already specified in the experiment file.
-            weights = population_config["geography"]
+            weights = geography_weights
         else:
             weights = weights_config.get(name)
 

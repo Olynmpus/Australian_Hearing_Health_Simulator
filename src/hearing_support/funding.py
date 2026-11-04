@@ -106,6 +106,44 @@ class FundingArrangement:
 
         return True
 
+    def validate_country_pathways(self, country_profile):
+        """Validate the funding pathway against a country profile."""
+        self.validate()
+
+        if not isinstance(country_profile, dict):
+            raise ValueError("country_profile must be a dictionary.")
+
+        healthcare = country_profile.get("healthcare_system")
+
+        if not isinstance(healthcare, dict):
+            raise ValueError(
+                "Country profile must contain a healthcare_system object."
+            )
+
+        pathways = healthcare.get("funding_pathways")
+
+        if (
+            not isinstance(pathways, list)
+            or not pathways
+            or any(
+                not isinstance(item, str) or not item.strip()
+                for item in pathways
+            )
+            or len(pathways) != len(set(pathways))
+        ):
+            raise ValueError(
+                "Country funding pathways must be a non-empty "
+                "list of unique strings."
+            )
+
+        if self.funding_pathway not in pathways:
+            raise ValueError(
+                f"Funding pathway '{self.funding_pathway}' "
+                "is not supported by this country profile."
+            )
+
+        return True
+
     def to_dict(self):
         """Return a serialisable representation of the arrangement."""
 

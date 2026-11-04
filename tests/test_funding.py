@@ -108,3 +108,34 @@ def test_to_dict_returns_funding_information():
     assert result["subsidy_amount"] == 800.0
     assert result["private_contribution"] == 300.0
     assert result["out_of_pocket_cost"] == 400.0
+
+
+def test_funding_pathway_valid_for_country():
+    arrangement = FundingArrangement(
+        agent_id="PERSON-009",
+        funding_pathway="public",
+    )
+
+    country_profile = {
+        "healthcare_system": {
+            "funding_pathways": ["public", "private", "unknown"],
+        }
+    }
+
+    assert arrangement.validate_country_pathways(country_profile) is True
+
+
+def test_funding_pathway_not_supported_by_country_is_rejected():
+    arrangement = FundingArrangement(
+        agent_id="PERSON-010",
+        funding_pathway="mixed",
+    )
+
+    country_profile = {
+        "healthcare_system": {
+            "funding_pathways": ["public", "private", "unknown"],
+        }
+    }
+
+    with pytest.raises(ValueError, match="not supported"):
+        arrangement.validate_country_pathways(country_profile)

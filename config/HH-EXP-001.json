@@ -1,6 +1,7 @@
 {
     "experiment_id": "HH-EXP-001",
     "experiment_name": "Baseline Australian Hearing Health and Help-Seeking Scenario",
+    "country_profile": "countries/australia_reference.json",
     "population": {
         "size": 1000,
         "age_groups": [

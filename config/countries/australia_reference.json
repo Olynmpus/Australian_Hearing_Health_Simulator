@@ -1,0 +1,32 @@
+{
+    "country_profile_id": "AU-REFERENCE-001",
+    "country_name": "Australia",
+    "profile_type": "reference",
+    "evidence_status": "illustrative_assumptions_pending_calibration",
+    "currency": {
+        "code": "AUD",
+        "name": "Australian dollar"
+    },
+    "healthcare_system": {
+        "funding_pathways": [
+            "public",
+            "private",
+            "mixed",
+            "self_funded",
+            "other",
+            "unknown"
+        ]
+    },
+    "service_context": {
+        "geographies": [
+            "metropolitan",
+            "regional",
+            "remote_very_remote"
+        ]
+    },
+    "notes": [
+        "Initial reference profile for the configurable hearing health simulator.",
+        "Does not represent a validated or complete description of Australian hearing healthcare.",
+        "Country-specific policy, eligibility and funding rules require separate evidence and configuration."
+    ]
+}

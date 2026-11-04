@@ -1,14 +1,15 @@
 """Initial population experiment setup."""
 
 import json
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
 from src.config_loader import load_experiment_config
+from src.country_config import load_country_profile
 from src.population.generator import generate_population
 from src.population.integration import create_hearing_support_records
 from src.hearing_support.need import HearingSupportNeed
-from collections import Counter
 
 @dataclass
 class PopulationExperiment:
@@ -16,6 +17,8 @@ class PopulationExperiment:
 
     experiment_id: str
     experiment_name: str
+    country_profile_id: str
+    country_name: str
     population_size: int
     duration_months: int
     random_seed: int | None
@@ -42,6 +45,8 @@ class PopulationExperiment:
         return {
             "experiment_id": self.experiment_id,
             "experiment_name": self.experiment_name,
+            "country_profile_id": self.country_profile_id,
+            "country_name": self.country_name,
             "population_size": self.population_size,
             "duration_months": self.duration_months,
             "random_seed": self.random_seed,
@@ -100,6 +105,15 @@ def run_population_experiment(
         experiment_config_path
     )
 
+    experiment_path = Path(experiment_config_path).resolve()
+
+    country_profile_path = (
+        experiment_path.parent
+        / experiment_config["country_profile"]
+    )
+
+    country_profile = load_country_profile(country_profile_path)
+
     distribution_path = Path(distribution_config_path)
 
     if not distribution_path.exists():
@@ -131,6 +145,8 @@ def run_population_experiment(
             "experiment_name",
             experiment_config["experiment_id"],
         ),
+        country_profile_id=country_profile["country_profile_id"],
+        country_name=country_profile["country_name"],
         population_size=len(agents),
         duration_months=experiment_config["simulation"]["duration_months"],
         random_seed=experiment_config["simulation"].get("random_seed"),

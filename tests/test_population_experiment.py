@@ -50,6 +50,29 @@ class TestPopulationExperiment(unittest.TestCase):
             "simulation_assumption",
         )
 
+    def test_country_profile_metadata(self):
+        self.assertEqual(
+            self.experiment.country_profile_id,
+            "AU-REFERENCE-001",
+        )
+        self.assertEqual(
+            self.experiment.country_name,
+            "Australia",
+        )
+
+    def test_summary_reports_country_profile(self):
+        summary = self.experiment.summary()
+
+        self.assertEqual(
+            summary["country_profile_id"],
+            "AU-REFERENCE-001",
+        )
+        self.assertEqual(
+            summary["country_name"],
+            "Australia",
+        )
+
+
     def test_summary_reports_population_counts(self):
         summary = self.experiment.summary()
 

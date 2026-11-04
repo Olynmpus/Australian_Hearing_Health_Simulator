@@ -1,20 +1,23 @@
-# Australian Hearing Health Population Simulator
+# Hearing Health Population Simulator
 
-An agent-based simulation project exploring hearing health, communication experiences, access to hearing support, service capacity and individual care pathways in Australia.
+A configurable, agent-based simulation project for exploring hearing health, communication experiences, access to hearing support, healthcare services, funding arrangements and individual care pathways.
 
 ## Overview
 
-The Australian Hearing Health Population Simulator is a research and scenario-exploration project designed to examine how individual circumstances, communication experiences, hearing support needs, service availability and interventions may interact over time.
+The Hearing Health Population Simulator is a research, educational and scenario-exploration project. It uses synthetic individuals (agents) to explore how personal circumstances, hearing and communication experiences, access to support, service availability, funding arrangements and interventions may interact over time.
 
-The project uses synthetic individuals (agents) to represent different population characteristics and experiences. Agents can have different age groups, hearing profiles, functional difficulties, geographical circumstances, communication profiles and relationships.
+The simulator is designed to be **country-agnostic**. Australia is the initial reference framework for developing and exploring hearing-care pathways, healthcare structures, funding concepts and service contexts. The simulated population is hypothetical; it is not a representation or estimate of Australia's actual population.
 
-The simulator aims to support structured exploration of questions such as:
+Country-specific configurations can be developed to represent different population characteristics, geographical settings, healthcare systems, funding arrangements, service capacities and policy environments.
+
+The project aims to support structured exploration of questions such as:
 
 - How might geographical barriers affect access to hearing assessment and support?
 - How might service capacity, workforce availability and operational costs influence service delivery?
 - How do communication difficulties affect individual experiences and relationships?
 - How might funding arrangements and personal contributions influence access to care?
-- How could interventions and changes to service delivery affect individual hearing-care pathways?
+- How could changes to technology, services, campaigns or policy affect individual hearing-care pathways?
+- How might outcomes differ between population groups and geographical settings?
 
 The project is under active development.
 
@@ -31,7 +34,8 @@ The model distinguishes between:
 - Acquisition of hearing devices or other support
 - Actual use of support
 - Functional effectiveness
-- Individual satisfaction and longer-term outcomes
+- Individual satisfaction
+- Longer-term individual outcomes
 
 Ownership does not automatically imply use or benefit. Similarly, not owning a hearing aid does not necessarily mean that an individual has received unsuccessful care.
 
@@ -40,6 +44,8 @@ Ownership does not automatically imply use or benefit. Similarly, not owning a h
 A hearing profile alone does not determine an individual's communication experience.
 
 People with normal audiometric profiles may still report functional hearing or communication difficulties. The simulator therefore distinguishes hearing profiles from reported and confirmed functional difficulties.
+
+Functional difficulty should not automatically be interpreted as a specific clinical diagnosis.
 
 ### Unknown information remains unknown
 
@@ -53,7 +59,30 @@ Model information is classified using evidence-status concepts, including:
 - Simulation assumption
 - Not yet established
 
-Synthetic population characteristics and illustrative assumptions must not be interpreted as measured Australian population estimates.
+Synthetic population characteristics and illustrative assumptions must not be interpreted as measured population estimates.
+
+## Country configuration
+
+The simulator includes an initial country-profile configuration layer.
+
+The initial reference profile is:
+
+`config/countries/australia_reference.json`
+
+It identifies Australia as the initial reference country and records basic configuration information, including:
+
+- Country identity and profile type
+- Evidence status
+- Currency
+- Healthcare funding pathways
+- Geographic service contexts
+- Configuration notes
+
+The country profile is currently loaded by the population experiment runner and its identifying information is included in the experiment summary.
+
+**Important:** The initial country profile is a foundation for future country configurability. It does not yet control every population, funding, policy or service-delivery parameter. Country-specific rules and assumptions require further implementation and evidence.
+
+Australian reference information, country-specific evidence and simulation assumptions must remain distinguishable.
 
 ## Main components
 
@@ -64,10 +93,11 @@ Synthetic population characteristics and illustrative assumptions must not be in
 | Communication | Models communication environments, events and communication experiences. |
 | Behaviour | Represents individual experiences and relationship changes. |
 | Hearing support | Models support needs, funding arrangements, service access and care journeys. |
-| Service capacity | Represents workforce, geographic access, costs, funding and operational capacity. |
+| Service capacity | Represents workforce, geographical access, costs, funding and operational capacity. |
 | Service delivery | Models service demand, allocation, assessment and delivery. |
 | Interventions | Loads and represents configurable interventions. |
-| Simulation | Runs longitudinal demonstrations and hearing-support scenarios. |
+| Country configuration | Loads and validates country reference profiles. |
+| Simulation | Runs longitudinal demonstrations and population experiments. |
 
 ## Optional local language-model integration
 
@@ -77,14 +107,16 @@ It uses Ollama to access a locally installed language model.
 
 Current characteristics:
 
-- LLM integration is optional and disabled by default.
+- LLM integration is optional.
 - The current default model is `qwen3:1.7b`.
 - Individual participant requests are handled separately.
 - Generated interpretations are explicitly marked as unverified.
-- LLM output does not directly modify agent states, relationships, clinical status or simulation outcomes.
+- LLM output does not directly modify authoritative agent states, relationships, clinical status or simulation outcomes.
 - The simulation remains controlled by Python logic.
 
 The LLM integration is experimental. Structurally valid model output should not be interpreted as factually or clinically validated.
+
+The longer-term architecture keeps language interpretation separate from authoritative simulation logic. AI may assist with interpreting questions and explaining results, but it must not invent simulation outcomes or silently change model parameters.
 
 ## Technology
 
@@ -93,14 +125,16 @@ The LLM integration is experimental. Structurally valid model output should not 
 - `pytest` for automated testing
 - Ollama for optional local language-model experimentation
 
-The application currently uses Python standard-library modules. No external runtime Python packages are required by the modules inspected so far. `pytest` is required to run the test suite.
+The project uses Python modules for its simulation logic. `pytest` is required to run the automated test suite. Additional dependencies may be required as reporting, analysis and other capabilities develop.
 
 ## Project structure
 
 ```text
-Australian_Hearing_Health_Simulator/
+Hearing_Health_Population_Simulator/
 │
 ├── config/
+│   ├── countries/
+│   │   └── australia_reference.json
 │   ├── HH-EXP-001.json
 │   ├── communication_vocabulary.json
 │   └── population_baseline.synthetic.json
@@ -122,7 +156,8 @@ Australian_Hearing_Health_Simulator/
 │   ├── population/
 │   ├── service_capacity/
 │   ├── service_delivery/
-│   └── simulation/
+│   ├── simulation/
+│   └── country_config.py
 │
 └── tests/
     └── Automated test suite
@@ -133,14 +168,14 @@ Australian_Hearing_Health_Simulator/
 Clone the repository:
 
 ```bash
-git clone git@github.com:Olynmpus/Australian_Hearing_Health_Simulator.git
-cd Australian_Hearing_Health_Simulator
+git clone git@github.com:Olynmpus/Hearing_Health_Population_Simulator.git
+cd Hearing_Health_Population_Simulator
 ```
 
 Create a virtual environment:
 
 ```bash
-python3 -m venv .venv
+python3.11 -m venv .venv
 ```
 
 Activate it on Linux or WSL:
@@ -163,7 +198,7 @@ From the project root:
 python -m pytest -q
 ```
 
-The test suite covers population generation, agents, communication, relationships, hearing support, funding, service access, service capacity, service delivery, interventions and simulation integration.
+The automated test suite covers population generation, agents, communication, relationships, hearing support, funding, service access, service capacity, service delivery, interventions, country configuration and simulation integration.
 
 ## Running the longitudinal demonstration
 
@@ -195,26 +230,38 @@ Current implementation areas include:
 - Funding and service access representation
 - Service capacity and delivery modelling
 - Longitudinal simulation
+- Population experiment execution
+- Initial country-profile loading and validation
 - Optional local LLM communication interpretation
 
-Further development is required to calibrate assumptions against appropriate evidence, validate model behaviour and establish the suitability of different scenarios for research or policy exploration.
+Further development is required to operationalise country-specific configurations, calibrate assumptions against appropriate evidence, validate model behaviour and establish the suitability of different scenarios for research or policy exploration.
 
 ## Limitations
 
 This project is not currently:
 
-- A calibrated representation of the Australian population.
+- A calibrated representation of the Australian population or any other country's population.
 - A validated epidemiological or clinical prediction model.
 - A clinical diagnostic or treatment recommendation system.
+- A complete implementation of country-specific healthcare funding, eligibility or policy rules.
 - Evidence that a particular policy or intervention will produce a specific real-world outcome.
 
-Simulation outputs depend on the assumptions, parameters and mechanisms implemented in the model. Results should be interpreted as exploratory outputs rather than predictions of actual Australian hearing health outcomes.
+Simulation outputs depend on the assumptions, parameters and mechanisms implemented in the model. Results should be interpreted as exploratory outputs rather than predictions of actual population or hearing-health outcomes.
 
 ## Research direction
 
 The longer-term objective is to develop an interactive educational and scenario-exploration platform.
 
 Users should be able to describe hearing-health scenarios in ordinary language, explore controlled baseline and intervention simulations, and examine the resulting changes alongside assumptions, uncertainty, limitations and potential unintended consequences.
+
+The intended workflow is:
+
+1. Interpret a user's scenario or question.
+2. Translate it into explicit, validated model parameters.
+3. Run a controlled baseline simulation.
+4. Run the proposed intervention or alternative scenario.
+5. Compare the resulting simulation outputs.
+6. Explain the results, assumptions, uncertainty and limitations.
 
 AI may assist with interpreting questions and explaining results. The underlying Python simulation remains responsible for generating authoritative model outcomes.
 

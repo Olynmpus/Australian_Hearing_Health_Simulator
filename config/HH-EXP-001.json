@@ -2,6 +2,12 @@
     "experiment_id": "HH-EXP-001",
     "experiment_name": "Baseline Australian Hearing Health and Help-Seeking Scenario",
     "country_profile": "countries/australia_reference.json",
+    "currency_conversion": {
+    	"source_currency": "AUD",
+    	"target_currency": "AUD",
+    	"aud_per_unit": 1.0,
+    	"evidence_status": "simulation_assumption"
+    },
     "population": {
         "size": 1000,
         "age_groups": [

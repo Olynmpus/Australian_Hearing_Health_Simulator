@@ -1,6 +1,56 @@
 ﻿import json
+import math
 from pathlib import Path
 
+def validate_currency_conversion(config):
+    """Validate the experiment's currency conversion settings."""
+
+    conversion = config.get("currency_conversion")
+
+    if not isinstance(conversion, dict):
+        raise ValueError(
+            "Missing or invalid currency_conversion section."
+        )
+
+    for field in ("source_currency", "target_currency"):
+        code = conversion.get(field)
+
+        if (
+            not isinstance(code, str)
+            or len(code) != 3
+            or not code.isascii()
+            or not code.isalpha()
+            or not code.isupper()
+        ):
+            raise ValueError(
+                f"{field} must be a three-letter uppercase currency code."
+            )
+
+    if conversion["target_currency"] != "AUD":
+        raise ValueError(
+            "Target currency must be AUD."
+        )
+
+    rate = conversion.get("aud_per_unit")
+
+    if (
+        isinstance(rate, bool)
+        or not isinstance(rate, (int, float))
+        or not math.isfinite(rate)
+        or rate <= 0
+    ):
+        raise ValueError(
+            "aud_per_unit must be a finite positive number."
+        )
+
+    evidence = conversion.get("evidence_status")
+
+    if not isinstance(evidence, str) or not evidence.strip():
+        raise ValueError(
+            "Currency conversion evidence_status must be a non-empty string."
+        )
+
+    return True
 
 def load_experiment_config(config_path):
     """
@@ -37,6 +87,7 @@ def validate_config(config):
         if section not in config:
             raise ValueError(f"Missing configuration section: {section}")
 
+    validate_currency_conversion(config)
     population_size = config["population"]["size"]
 
     if population_size <= 0:

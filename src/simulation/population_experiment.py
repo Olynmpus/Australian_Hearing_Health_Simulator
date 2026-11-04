@@ -7,7 +7,8 @@ from pathlib import Path
 from src.config_loader import load_experiment_config
 from src.population.generator import generate_population
 from src.population.integration import create_hearing_support_records
-
+from src.hearing_support.need import HearingSupportNeed
+from collections import Counter
 
 @dataclass
 class PopulationExperiment:
@@ -24,7 +25,19 @@ class PopulationExperiment:
     support_records: list
 
     def summary(self):
-        """Return a concise experiment summary."""
+        """Return population counts and profile distributions."""
+
+        def distribution(values):
+            values = list(values)
+            counts = Counter(values)
+            total = len(values)
+            return {
+                category: {
+                    "count": count,
+                    "percentage": round(count / total * 100, 1),
+                }
+                for category, count in sorted(counts.items())
+            }
 
         return {
             "experiment_id": self.experiment_id,
@@ -36,8 +49,46 @@ class PopulationExperiment:
             "evidence_status": self.evidence_status,
             "agent_count": len(self.agents),
             "support_record_count": len(self.support_records),
+            "population_distributions": {
+                "age_group": distribution(
+                    agent.profile.age_group for agent in self.agents
+                ),
+                "hearing_profile": distribution(
+                    agent.profile.hearing_profile for agent in self.agents
+                ),
+                "geography": distribution(
+                    agent.profile.geography for agent in self.agents
+                ),
+                "functional_status": distribution(
+                    agent.profile.auditory_functional_status
+                    for agent in self.agents
+                ),
+            },
         }
 
+def initialise_hearing_support_needs(support_records):
+    """Create an initial month-zero need assessment for each individual.
+
+    Functional difficulty is preserved from the agent profile.
+    Perceived need and help-seeking intention remain unknown.
+    """
+
+    for record in support_records:
+        need = HearingSupportNeed(
+            agent_id=record.agent_id,
+            assessment_month=0,
+            functional_difficulty_status=(
+                record.agent.profile.auditory_functional_status
+            ),
+            perceived_need="unknown",
+            help_seeking_intention="unknown",
+            help_seeking_action="unknown",
+            evidence_status="simulation_assumption",
+        )
+
+        record.add_hearing_support_need(need)
+
+    return support_records
 
 def run_population_experiment(
     experiment_config_path,
@@ -70,6 +121,9 @@ def run_population_experiment(
     )
 
     support_records = create_hearing_support_records(agents)
+    support_records = initialise_hearing_support_needs(
+    support_records
+)
 
     return PopulationExperiment(
         experiment_id=experiment_config["experiment_id"],

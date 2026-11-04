@@ -44,9 +44,9 @@ class CommunicationEvent:
     speaker_id: str
     listener_id: str
 
-    intended_message: str
-    perceived_message: str
-    listener_interpretation: str
+    intended_message: str | None
+    perceived_message: str | None
+    listener_interpretation: str | None
 
     channel: str = "speech"
 
@@ -70,17 +70,23 @@ class CommunicationEvent:
                 "Speaker and listener must be different agents."
             )
 
-        required_messages = {
-            "intended_message": self.intended_message,
+        if not isinstance(self.intended_message, str):
+            raise ValueError("intended_message must be a string.")
+
+        if not self.intended_message.strip():
+            raise ValueError("intended_message cannot be empty.")
+
+        optional_messages = {
             "perceived_message": self.perceived_message,
             "listener_interpretation": self.listener_interpretation,
         }
 
-        for field_name, value in required_messages.items():
-            if not isinstance(value, str) or not value.strip():
-                raise ValueError(
-                    f"{field_name} must be a non-empty string."
-                )
+        for field_name, value in optional_messages.items():
+            if value is not None:
+                if not isinstance(value, str) or not value.strip():
+                    raise ValueError(
+                        f"{field_name} must be a non-empty string or None."
+                    )
 
         allowed_channels = {
             "speech",

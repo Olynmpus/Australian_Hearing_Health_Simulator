@@ -9,8 +9,13 @@ from src.behaviour.communication_model import (
     CommunicationEvent,
     CommunicationEnvironment,
 )
+from src.behaviour.llm_interpreter import (
+    interpret_interaction,
+    DEFAULT_MODEL,
+)
 
-def run_experiment(database_path):
+
+def run_experiment(database_path, enable_llm=False):
     """Run a four-month illustrative longitudinal experiment."""
 
     database_path = Path(database_path)
@@ -225,13 +230,52 @@ def run_experiment(database_path):
             speaker_id=participants[1],
             listener_id=participants[0],
             intended_message=event["message"],
-            perceived_message=event["message"],
-            listener_interpretation=event["perspectives"][participants[0]]["interpretation"],
+            perceived_message=None,
+            listener_interpretation=None,
             channel="speech",
             environment=CommunicationEnvironment(),
         )
 
         communication_event.validate()
+
+        llm_results = {}
+
+        if enable_llm and event["interaction_id"] == "INTERACTION-001":
+            for participant_id in participants:
+                participant_role = (
+                    event["perspectives"][participant_id]["perspective_type"]
+                )
+
+                try:
+                    result = interpret_interaction(
+                        agent_id=participant_id,
+                        interaction_context={
+                            "event_type": event["event_type"],
+                            "event_description": event["message"],
+                            "participant_role": participant_role,
+                        },
+                    )
+
+                    llm_results[participant_id] = {
+                        "text": result.text,
+                        "source": "local_llm",
+                        "model": result.model,
+                        "evidence_status": "model_generated_unverified",
+                        "verified": False,
+                        "status": result.status,
+                        "error": result.error,
+                    }
+
+                except Exception as exc:
+                    llm_results[participant_id] = {
+                        "text": None,
+                        "source": "local_llm",
+                        "model": DEFAULT_MODEL,
+                        "evidence_status": "model_generated_unverified",
+                        "verified": False,
+                        "status": "failed",
+                        "error": str(exc),
+                    }
 
         for agent_id in participants:
             agent = agents[agent_id]
@@ -287,6 +331,23 @@ def run_experiment(database_path):
                     "perspective_type": perspective["perspective_type"],
                     "state_changes": state_changes,
                     "relationship_changes": relationship_changes,
+                    "interpretation_provenance": {
+                        "source": "scenario_script",
+                        "evidence_status": "simulation_assumption",
+                        "verified": False,
+                    },
+                    "llm_interpretation": llm_results.get(
+                        agent_id,
+                        {
+                            "text": None,
+                            "source": "local_llm",
+                            "model": None,
+                            "evidence_status": "model_generated_unverified",
+                            "verified": False,
+                            "status": "not_generated",
+                            "error": None,
+                        },
+                    ),
                 },
             )
 

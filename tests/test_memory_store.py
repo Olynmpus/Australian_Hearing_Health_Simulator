@@ -78,7 +78,35 @@ class TestMemoryStore(unittest.TestCase):
                     outcome="unknown",
                     source_accuracy=1.5
                 )
+    def test_interpretation_provenance_is_preserved(self):
+        with tempfile.TemporaryDirectory() as temporary_folder:
 
+            database = Path(temporary_folder) / "test_memory.db"
+            memory = MemoryStore(database)
+
+            provenance = {
+                "source": "scenario_script",
+                "evidence_status": "simulation_assumption",
+                "verified": False,
+            }
+
+            memory.record_event(
+                agent_id="PERSON-001",
+                month=1,
+                event_type="family_conversation",
+                outcome="negative_communication",
+                agent_interpretation="I felt excluded.",
+                additional_details={
+                    "interpretation_provenance": provenance,
+                },
+            )
+
+            history = memory.get_history("PERSON-001")
+
+            self.assertEqual(
+                history[0]["additional_details"]["interpretation_provenance"],
+                provenance,
+            )
     def test_same_interaction_can_have_individual_perspectives(self):
 
         with tempfile.TemporaryDirectory() as temporary_folder:

@@ -23,6 +23,28 @@ class TestCommunicationEvent(unittest.TestCase):
 
         self.assertTrue(event.validate())
 
+    def test_unknown_listener_interpretation_is_valid(self):
+        event = self.create_event(
+            listener_interpretation=None
+        )
+
+        self.assertTrue(event.validate())
+
+    def test_unknown_perceived_message_is_valid(self):
+        event = self.create_event(
+            perceived_message=None
+        )
+
+        self.assertTrue(event.validate())
+
+    def test_empty_listener_interpretation_is_rejected(self):
+        event = self.create_event(
+            listener_interpretation=""
+        )
+
+        with self.assertRaises(ValueError):
+            event.validate()
+
     def test_same_speaker_and_listener_is_rejected(self):
         event = self.create_event(
             listener_id="CLINICIAN-001"

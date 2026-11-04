@@ -14,6 +14,54 @@ from src.behaviour.llm_interpreter import (
     DEFAULT_MODEL,
 )
 
+def build_individual_context(
+    agent,
+    other_participant,
+    other_agent,
+    relationship,
+    event,
+    memory,
+):
+    """Build participant-specific context for LLM interpretation."""
+
+    return {
+        "individual": {
+            "agent_id": agent.agent_id,
+            "role": agent.profile.role,
+            "profile": {
+                "age_group": agent.profile.age_group,
+                "hearing_profile": agent.profile.hearing_profile,
+                "auditory_functional_status": (
+                    agent.profile.auditory_functional_status
+                ),
+                "communication_profile": (
+                    agent.profile.communication_profile.to_dict()
+                ),
+            },
+        },
+        "other_participant": {
+            "agent_id": other_participant,
+            "role": other_agent.profile.role,
+            "relationship_type": relationship.relationship_type,
+        },
+        "previous_experiences": memory.get_history(
+            agent.agent_id,
+            limit=3,
+        ),
+        "current_interaction": {
+            "event_type": event["event_type"],
+            "event_description": event["message"],
+            "participant_role": (
+                event["perspectives"][agent.agent_id]["perspective_type"]
+            ),
+            "observed_event": (
+                event["perspectives"][agent.agent_id].get("observed_event")
+            ),
+            "participant_report": (
+                event["perspectives"][agent.agent_id].get("participant_report")
+            ),
+        },
+    }
 
 def run_experiment(database_path, enable_llm=False):
     """Run a four-month illustrative longitudinal experiment."""
@@ -149,12 +197,25 @@ def run_experiment(database_path, enable_llm=False):
             "message": "A family conversation was difficult to follow.",
             "perspectives": {
                 "PERSON-001": {
+                    "observed_event": "The family conversation was difficult to follow.",
+                    "participant_report": (
+                        "The person reported difficulty following the conversation "
+                        "and feeling excluded."
+                    ),
                     "interpretation": "The person felt excluded from the conversation.",
                     "outcome": "negative_communication",
                     "perspective_type": "recipient",
                 },
                 "FAMILY-001": {
-                    "interpretation": "The family member noticed communication difficulties during the conversation.",
+                    "observed_event": (
+                        "The family member noticed that PERSON-001 was having "
+                        "difficulty following the conversation."
+                    ),
+                    "participant_report": None,
+                    "interpretation": (
+                        "The family member noticed communication difficulties "
+                        "during the conversation."
+                    ),
                     "outcome": None,
                     "perspective_type": "other_participant",
                 },
@@ -247,13 +308,29 @@ def run_experiment(database_path, enable_llm=False):
                 )
 
                 try:
+                    participant = agents[participant_id]
+
+                    other_id = next(
+                        other_id
+                        for other_id in participants
+                        if other_id != participant_id
+                    )
+
+                    relationship = relationships[participant_id][other_id]
+                    other_agent = agents[other_id]
+
+                    interaction_context = build_individual_context(
+                        agent=participant,
+                        other_participant=other_id,
+                        other_agent=other_agent,
+                        relationship=relationship,
+                        event=event,
+                        memory=memory,
+                    )
+
                     result = interpret_interaction(
                         agent_id=participant_id,
-                        interaction_context={
-                            "event_type": event["event_type"],
-                            "event_description": event["message"],
-                            "participant_role": participant_role,
-                        },
+                        interaction_context=interaction_context,
                     )
 
                     llm_results[participant_id] = {
@@ -329,6 +406,8 @@ def run_experiment(database_path, enable_llm=False):
                         "final_outcome": communication_event.final_outcome,
                     },
                     "perspective_type": perspective["perspective_type"],
+                    "observed_event": perspective.get("observed_event"),
+                    "participant_report": perspective.get("participant_report"),
                     "state_changes": state_changes,
                     "relationship_changes": relationship_changes,
                     "interpretation_provenance": {

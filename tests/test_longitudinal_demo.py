@@ -145,15 +145,27 @@ class TestLongitudinalDemo(unittest.TestCase):
                 second_call.kwargs["agent_id"],
                 "FAMILY-001",
             )
+            first_context = first_call.kwargs["interaction_context"]
+            second_context = second_call.kwargs["interaction_context"]
 
             self.assertNotEqual(
-                first_call.kwargs["interaction_context"]["participant_role"],
-                second_call.kwargs["interaction_context"]["participant_role"],
+                first_context["current_interaction"]["participant_role"],
+                second_context["current_interaction"]["participant_role"],
             )
 
             self.assertEqual(
-                first_call.kwargs["interaction_context"]["event_description"],
-                second_call.kwargs["interaction_context"]["event_description"],
+                first_context["current_interaction"]["event_description"],
+                second_context["current_interaction"]["event_description"],
+            )
+
+            self.assertEqual(
+                first_context["individual"]["agent_id"],
+                "PERSON-001",
+            )
+
+            self.assertEqual(
+                second_context["individual"]["agent_id"],
+                "FAMILY-001",
             )
 
             person_llm = (

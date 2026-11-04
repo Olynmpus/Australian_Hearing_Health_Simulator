@@ -70,12 +70,44 @@ def interpret_interaction(
         'Return exactly this JSON structure: '
         '{"interpretation":"string"}. '
         f"Participant: {agent_id}. "
-        "Interpret only what can reasonably be established "
-        "from the supplied interaction context. "
-        "Do not invent what was said, what was heard, "
-        "feelings, intentions, causes, diagnoses, or outcomes. "
-        "If an interpretation cannot be established, "
+
+        "Interpret the interaction strictly from the perspective "
+        "of the individual identified in the individual section. "
+
+        "IMPORTANT CONTEXT RULES: "
+        "The individual section describes the person being interpreted. "
+        "The other_participant section describes a different person. "
+        "Never transfer the other participant's characteristics, "
+        "state or experiences to the individual. "
+
+        "The current_interaction section describes the available "
+        "evidence about the actual interaction. "
+        "Do not invent events, dialogue, communication barriers "
+        "or reactions that are not described there. "
+
+        "Current state values are general model indicators. "
+        "They are not direct observations of this interaction. "
+        "Do not interpret numerical values as proof of a particular "
+        "feeling, behaviour or experience. "
+
+        "Relationship values describe the individual's relationship "
+        "with the other participant. They do not establish what "
+        "happened during this interaction. "
+
+        "Previous experiences may provide context but do not prove "
+        "that the same experience occurred again. "
+
+        "Describe what the individual might have experienced, "
+        "but distinguish available evidence from possible explanations. "
+        "Use cautious language for inferred thoughts and feelings. "
+
+        "Do not invent diagnoses, intentions, dialogue, events, "
+        "causal relationships or outcomes. "
+
+        "Keep the interpretation concise and specific to this interaction. "
+        "If the available evidence does not support a useful interpretation, "
         'return "not_established". '
+
         f"Context: {context_json}"
     )
 
@@ -153,7 +185,6 @@ def interpret_interaction(
             status="failed",
             error="missing_interpretation",
         )
-
     return InterpretationResult(
         text=interpretation.strip(),
         model=model,

@@ -12,6 +12,11 @@
     "assumptions": [
         "The intervention is a proposed scenario, not an established Australian service.",
         "The intervention does not guarantee service availability or individual attendance.",
-        "Its effect on access, waiting times and outcomes has not yet been established."
+        "Its effect on access, waiting times and outcomes has not yet been established.",
+        "One remote outreach visit is scheduled every three months.",
+        "Each remote visit provides a maximum of two initial assessment appointments.",
+        "Remote round-trip travel time is randomly generated once per experiment, greater than two hours and less than twelve hours.",
+        "Remote travel uses the existing clinician and does not create additional workforce capacity.",
+        "Remote travel-time values are illustrative simulation assumptions, not measured Australian travel times."
     ]
 }

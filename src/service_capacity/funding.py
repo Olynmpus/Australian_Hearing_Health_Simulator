@@ -38,6 +38,7 @@ class OperationalFunding:
     service_types: list[str]
     target_geographies: list[str]
     evidence_status: str
+    parent_funding_id: str | None = None
 
     def validate(self):
         for field_name in (
@@ -116,6 +117,20 @@ class OperationalFunding:
                 f"Invalid evidence status: {self.evidence_status}"
             )
 
+        if self.parent_funding_id is not None:
+            if (
+                not isinstance(self.parent_funding_id, str)
+                or not self.parent_funding_id.strip()
+            ):
+                raise ValueError(
+                    "parent_funding_id must be None or a "
+                    "non-empty string."
+                )
+
+            if self.parent_funding_id == self.funding_id:
+                raise ValueError(
+                    "A funding allocation cannot be its own parent."
+                )
         return True
 
     def to_dict(self):
@@ -130,4 +145,5 @@ class OperationalFunding:
             "service_types": list(self.service_types),
             "target_geographies": list(self.target_geographies),
             "evidence_status": self.evidence_status,
+            "parent_funding_id": self.parent_funding_id,
         }

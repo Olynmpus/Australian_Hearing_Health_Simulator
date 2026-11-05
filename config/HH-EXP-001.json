@@ -59,6 +59,18 @@
         "number_of_repetitions": 100,
         "random_seed": 42
     },
+    "demand": {
+        "annual_request_probability": 0.07,
+        "service_type": "audiology_assessment",
+        "target_age_group": "working_age_adult",
+        "target_geography": "regional",
+        "request_source": "individual_request",
+        "evidence_status": "simulation_assumption"
+    },
+    "attendance": {
+        "attendance_probability": 0.80,
+        "evidence_status": "simulation_assumption"
+    },
     "evidence_status": "illustrative_assumptions_pending_calibration",
     "auditory_function": {
         "functional_statuses": [

@@ -174,3 +174,29 @@ def test_schedule_without_costs_is_rejected():
             planned_appointments_per_month=24,
             planned_clinical_hours_per_month=24,
         )
+def test_integrated_assessment_preserves_insufficient_funding_status():
+    funding = OperationalFunding(
+        funding_id="FUND-001",
+        funding_source="Government",
+        funding_program="Regional Hearing Services",
+        available_amount_aud=10000,
+        period_months=12,
+        service_types=["audiology_assessment"],
+        target_geographies=["regional"],
+        evidence_status="simulation_assumption",
+    )
+
+    result = assess_service_operations(
+        **make_inputs(),
+        planned_trips_per_month=4,
+        planned_appointments_per_month=24,
+        planned_clinical_hours_per_month=24,
+        funding_records=[funding],
+        geography="regional",
+        operating_months=12,
+    )
+
+    assert result.assessment_status == "assessed"
+    assert result.funding_assessment.assessment_status == "insufficient"
+    assert result.funding_assessment.total_available_funding_aud == 10000
+    assert result.funding_assessment.funding_balance_aud == -20096
